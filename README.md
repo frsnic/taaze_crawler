@@ -1,4 +1,4 @@
-# taaze_crawler 
+# Taaze Crawler 
 
 ### Install
 
