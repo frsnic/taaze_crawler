@@ -9,9 +9,9 @@ class TaazeCrawler
 
   def initialize
     @query_hash = {
-      cp: 1,   # page number
+      cp: 1,    # page number
       ps: 1200, # page count
-      ct: 0,   # all category
+      ct: 0,    # all category
       cl: 1
     }
     @results = {}
