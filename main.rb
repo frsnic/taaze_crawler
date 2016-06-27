@@ -7,7 +7,6 @@ require "awesome_print"
 class TaazeCrawler
 
   attr_accessor :query_hash, :title_hash, :rates_hash
-  attr_accessor :title_json_file, :rates_hash
 
   def initialize
     @query_hash = {
@@ -17,7 +16,7 @@ class TaazeCrawler
       cl: 1
     }
     @title_hash = File.exist?(title_json_file_name) ? JSON.parse(File.read(title_json_file_name)) : generate_title_hash()
-    @rates_hash = File.exist?(rates_json_file_name) ? JSON.parse(File.read(rates_json_file_name)) : { "rates": [] }
+    @rates_hash = File.exist?(rates_json_file_name) ? JSON.parse(File.read(rates_json_file_name)) : { "rates" => [] }
   end
 
   def taaze_url
@@ -74,7 +73,7 @@ class TaazeCrawler
       link = result['href']
       page = Nokogiri::HTML open(URI.escape link)
       result = page.xpath('//span[@itemprop="isbn"]').first
-      result ? isbn = result.content : return
+      isbn = result ? result.content : nil
       rates_hash["rates"] << {
         title: keyword,
         rate:  page.xpath('//span[@class="rating"]').first.content.to_f,
