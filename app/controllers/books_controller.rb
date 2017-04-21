@@ -63,6 +63,14 @@ class BooksController < ApplicationController
     end
   end
 
+  def taaze
+    time = Time.now
+    taaze_crawler = Crawler::Taaze.new
+    results = taaze_crawler.generate_title_hash
+    taaze_crawler.taaze_detail Book.where("updated_at > ?", time)
+    render text: 'success'
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_book

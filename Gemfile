@@ -50,3 +50,5 @@ gem 'awesome_print'
 gem 'kaminari'
 
 gem 'ransack'
+
+gem 'annotate'

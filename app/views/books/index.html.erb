@@ -2,7 +2,7 @@
 
 <h1>Listing Books</h1>
 
-<%= search_form_for @q, html: { class: "form-inline pull-right" } do |f| %>
+<%= search_form_for @q, html: { class: "bottom-buffer form-inline pull-right" } do |f| %>
   <div class="form-group">
     <%= f.search_field :name_or_isbn_cont, class: "form-control" %>
   </div>
@@ -10,6 +10,7 @@
 <% end %>
 
 <%= link_to 'New Book', new_book_path, class: "btn btn-primary pull-right", style: "margin-right: 10px;" %>
+<%= link_to 'Get Taaze', taaze_books_path, class: "btn btn-info pull-right", target: '_blank', style: "margin-right: 10px;" %>
 
 <table class="table table-striped">
   <thead>
