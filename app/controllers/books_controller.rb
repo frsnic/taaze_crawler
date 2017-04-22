@@ -67,7 +67,7 @@ class BooksController < ApplicationController
     time = Time.now
     taaze_crawler = Crawler::Taaze.new
     results = taaze_crawler.generate_title_hash
-    taaze_crawler.taaze_detail Book.where("updated_at > ?", time)
+    Book.taaze_detail Book.where(isbn: nil)
     render text: 'success'
   end
 
