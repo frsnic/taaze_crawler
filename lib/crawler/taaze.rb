@@ -50,7 +50,7 @@ module Crawler
           title_hash[key] = [] unless title_hash.has_key? key
           title_hash[key] << e.children.first.content
           # insert db
-          Book.first_or_create(name: e.text, taaze_link: e.attributes["href"].value)
+          Book.find_or_create_by(name: e.text, taaze_link: e.attributes["href"].value)
         end
 
         File.open(title_json_file_name, 'w') { |f| f.write(title_hash.to_json) } and break if titles.size != query_hash[:ps]
