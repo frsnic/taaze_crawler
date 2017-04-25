@@ -6,7 +6,7 @@ class BooksController < ApplicationController
   def index
     @q = Book.ransack(params[:q])
     @books = params[:q] ? @q.result(distinct: true).page(params[:page]) :
-      Book.where("rate > ?", 4.0).page(params[:page])
+      Book.where("rate > ?", 4.9).page(params[:page]).order(publish_at: :desc)
   end
 
   # GET /books/1
@@ -67,7 +67,7 @@ class BooksController < ApplicationController
     time = Time.now
     taaze_crawler = Crawler::Taaze.new
     results = taaze_crawler.generate_title_hash
-    Book.taaze_detail Book.where(isbn: nil)
+    Book.correction 
     render text: 'success'
   end
 
