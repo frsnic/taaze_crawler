@@ -18,6 +18,7 @@
       <th style="width: 300px;">Name</th>
       <th>Isbn</th>
       <th>Rate</th>
+      <th>Author</th>
       <th>Quantity</th>
       <th>Publish At</th>
       <th>Last Updated</th>
@@ -31,6 +32,7 @@
         <td><%= link_to book.name, book.taaze_url,  target: '_blank' %></td>
         <td><%= book.isbn %></td>
         <td><%= link_to book.rate, book.anobii_url, target: '_blank' %></td>
+        <td><%= book.author %></td>
         <td><%= book.quantity %></td>
         <td><%= book.publish_at.try(:strftime, "%Y-%m-%d %H:%M") %></td>
         <td><%= book.updated_at.strftime("%Y-%m-%d %H:%M") %></td>

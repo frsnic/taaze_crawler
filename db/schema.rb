@@ -11,21 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170421082507) do
+ActiveRecord::Schema.define(version: 20170426084908) do
 
   create_table "books", force: :cascade do |t|
     t.string   "name"
     t.string   "isbn"
     t.float    "rate"
     t.integer  "quantity"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.string   "taaze_link"
     t.string   "author"
     t.string   "press"
     t.string   "status"
     t.string   "annotate"
     t.date     "publish_at"
+    t.boolean  "is_disabled", default: false
   end
 
 end

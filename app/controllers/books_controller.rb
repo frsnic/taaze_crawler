@@ -4,9 +4,9 @@ class BooksController < ApplicationController
   # GET /books
   # GET /books.json
   def index
-    @q = Book.ransack(params[:q])
+    @q = Book.enabled.ransack(params[:q])
     @books = params[:q] ? @q.result(distinct: true).page(params[:page]) :
-      Book.where("rate > ?", 4.9).page(params[:page]).order(publish_at: :desc)
+      Book.enabled.where("rate > ?", 4.9).page(params[:page]).order(publish_at: :desc)
   end
 
   # GET /books/1
@@ -67,18 +67,20 @@ class BooksController < ApplicationController
     time = Time.now
     taaze_crawler = Crawler::Taaze.new
     results = taaze_crawler.generate_title_hash
-    Book.correction 
+    Book.enabled.where.not(name: taaze_crawler.title_hash.values.flatten.uniq).update_all(is_disabled: true)
+    Book.correction
     render text: 'success'
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_book
-      @book = Book.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_book
+    @book = Book.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def book_params
-      params.require(:book).permit(:name, :isbn, :rate, :quantity)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def book_params
+    params.require(:book).permit(:name, :isbn, :rate, :quantity)
+  end
+
 end

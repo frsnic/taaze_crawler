@@ -2,30 +2,34 @@
 #
 # Table name: books
 #
-#  id         :integer          not null, primary key
-#  quantity   :integer
-#  rate       :float
-#  name       :string
-#  isbn       :string
-#  taaze_link :string
-#  author     :string
-#  press      :string
-#  status     :string
-#  annotate   :string
-#  publish_at :date
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  is_disabled :boolean          default(FALSE)
+#  name        :string
+#  isbn        :string
+#  rate        :float
+#  quantity    :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  taaze_link  :string
+#  author      :string
+#  press       :string
+#  status      :string
+#  annotate    :string
+#  publish_at  :date
 #
 
 class Book < ActiveRecord::Base
   paginates_per 20
 
+  scope :enabled,  -> { where(is_disabled: false) }
+  scope :disabled, -> { where(is_disabled: true) }
+
   class << self
     require 'open-uri'
 
     def correction
-      Book.update_details Book.where(isbn: nil), 'taaze'
-      Book.update_details Book.where(rate: nil).where.not(isbn: nil).where.not(isbn: ''), 'anobii'
+      Book.update_details Book.enabled.where(isbn: nil), 'taaze'
+      Book.update_details Book.enabled.where(rate: nil).where.not(isbn: nil).where.not(isbn: ''), 'anobii'
     end
 
     def update_details(books, type, sec = 3)
@@ -44,9 +48,9 @@ class Book < ActiveRecord::Base
     return unless self.taaze_link
     puts "#{self.id} #{self.taaze_url}"
     page = Nokogiri::HTML open(self.taaze_url)
+    self.isbn = ''
     page.css('.prodInfo p').each do |e|
       next unless e.text
-      self.isbn        = ''
       self.author      = e.text.gsub('作者：', '') if e.text.include? '作者：'
       self.press       = e.text.gsub('出版社：', '') if e.text.include? '出版社：'
       self.isbn        = e.text.gsub('ISBN/ISSN：', '') if e.text.include? 'ISBN/ISSN：'
@@ -63,18 +67,9 @@ class Book < ActiveRecord::Base
     page = Nokogiri::HTML open(URI.escape self.anobii_url).read, nil, 'utf-8'
     result = page.xpath('//li[@class="title"]/a').first
     if result
-      search_uri = URI.parse(URI.escape result['href'])
-      result = Net::HTTP.get_response(search_uri)
-      if %w(301 302).include? result.code
-        uri = URI.parse result.header['location']
-        unless uri.host
-          search_uri.path = result.header['location']
-          uri = search_uri.host 
-        end
-        result = Net::HTTP.get_response(uri.host, uri.path) 
-      end
-      page = Nokogiri::HTML result
-      self.update(rate: page.xpath('//span[@class="rating"]').first.content.to_f)
+      result = Typhoeus.get(URI.escape(result['href']), followlocation: true)
+      page   = Nokogiri::HTML result.body
+      self.update(rate: result.code == 200 ? page.xpath('//span[@class="rating"]').first.content.to_f : -1)
     else
       self.update(rate: -1)
     end

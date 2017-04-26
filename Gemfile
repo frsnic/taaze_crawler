@@ -52,3 +52,5 @@ gem 'kaminari'
 gem 'ransack'
 
 gem 'annotate'
+
+gem 'typhoeus'
