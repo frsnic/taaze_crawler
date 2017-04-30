@@ -67,7 +67,7 @@ class BooksController < ApplicationController
     time = Time.now
     taaze_crawler = Crawler::Taaze.new
     results = taaze_crawler.generate_title_hash
-    Book.enabled.where.not(name: taaze_crawler.title_hash.values.flatten.uniq).update_all(is_disabled: true)
+    Book.enabled.where.not(name: results).update_all(is_disabled: true)
     Book.correction
     render text: 'success'
   end
