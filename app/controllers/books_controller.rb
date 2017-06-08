@@ -4,9 +4,13 @@ class BooksController < ApplicationController
   # GET /books
   # GET /books.json
   def index
+    default_q = {
+      name_not_cont_all: (1..9).to_a.map { |i| ["(#{i})", "（#{i}）", "(0#{i})", "（0#{i}）"] }.flatten,
+      rate_gt: 4.5
+    }
     @q = Book.enabled.ransack(params[:q])
     @books = params[:q] ? @q.result(distinct: true).page(params[:page]) :
-      Book.enabled.where("rate > ?", 4.9).page(params[:page]).order(publish_at: :desc)
+      Book.enabled.ransack(default_q).result.page(params[:page]).order(publish_at: :desc)
   end
 
   # GET /books/1
