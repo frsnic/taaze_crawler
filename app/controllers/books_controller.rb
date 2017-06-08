@@ -6,6 +6,7 @@ class BooksController < ApplicationController
   def index
     default_q = {
       name_not_cont_all: (1..9).to_a.map { |i| ["(#{i})", "（#{i}）", "(0#{i})", "（0#{i}）"] }.flatten,
+      press_not_cont_all: %w(東立 九星文化出版社 台灣角川股份有限公司 旺福圖書 N/A 銘顯文化事業有限公司 上海譯文出版社 明日工作室股份有限公司 橘子),
       rate_gt: 4.5
     }
     @q = Book.enabled.ransack(params[:q])
